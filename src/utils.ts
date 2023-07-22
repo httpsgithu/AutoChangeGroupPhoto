@@ -51,7 +51,7 @@ export class Utils {
                         ogs(
                             {
                                 headers: {
-                                    "user-agent": "AutoChangeGroupPhotoBot/0.1",
+                                    "user-agent": "Mozilla/5.0 (compatible; AutoChangeGroupPhotoBot/0.1; +https://github.com/ACGNTaiwan/AutoChangeGroupPhoto)",
                                 },
                                 url,
                             },
@@ -76,7 +76,14 @@ export class Utils {
                                     }
                                 }
                             },
-                        );
+                        ).catch((e: any) => {
+                            logger.info(CONSTS.URL_NOT_FOUND_OG_IMAGE_URL(msg, url));
+                            if (response.body.length > 0) {
+                                resolve(Buffer.from(response.body));
+                            } else {
+                                reject(Buffer.from([]));
+                            }
+                        });
                     });
                 }
             } else {
@@ -282,6 +289,7 @@ export class Utils {
             };
             if (config.pixiv.refreshToken === "") {
                 logger.info(CONSTS.ENABLING_PIXIV_ACCOUNT(config.pixiv.account));
+//		pixiv.tokenRequest(config.pixiv.account, config.pixiv.password)
                 pixiv.login(config.pixiv.account, config.pixiv.password)
                     .then(pixivLogged)
                     .catch(pixivLoginError);
